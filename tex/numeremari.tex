@@ -1,0 +1,198 @@
+% \title{Numere Mari}
+% \author{Emily Susan}
+% \date{}
+
+\ChapterWithAuthor{Numere mari}{Emily Susan}
+
+\section{Noțiuni introductive}
+
+% Definiție pentru Numere în Baza 10
+\begin{definition}\label{def:numere_in_baza_10}
+Fie $\overline{a_{n-1} a_{n-2} \ldots a_1 a_0}$ un număr în baza 10, format din $n$ cifre. Aici, \( a_i \) pentru \( 0 \leq i < n \) sunt cifrele numărului, cu fiecare \( a_i \) satisfăcând \( 0 \leq a_i \leq 9 \), și \( a_{n-1} \neq 0 \). Valoarea numărului este dată de:
+\begin{equation*}
+    \overline{a_{n-1} a_{n-2} \ldots a_1 a_0} = \sum_{i=0}^{n-1} a_i \times 10^i
+\end{equation*}
+Această sumă poate fi descompusă în:
+\begin{equation*}
+    \overline{a_{n-1} a_{n-2} \ldots a_1 a_0} = a_{n-1} \times 10^{n-1} + a_{n-2} \times 10^{n-2} + \ldots + a_1 \times 10^1 + a_0 \times 10^0
+\end{equation*}
+\end{definition}
+
+% Observatie numere in orice baza
+\begin{observation}\label{obs:numere_in_baze}
+Similar, fie \( (\overline{a_{n-1} a_{n-2} \ldots a_1 a_0})_b \) un număr în baza \( b \), format din \( n \) cifre, unde \( a_i \) pentru \( 0 \leq i < n \) sunt cifrele numărului, cu fiecare \( a_i \) satisfăcând \( 0 \leq a_i < b \), și \( a_{n-1} \neq 0 \). Valoarea numărului este dată de:
+\[
+\overline{a_{n-1} a_{n-2} \ldots a_1 a_0}_b = \sum_{i=0}^{n-1} a_i \times b^i
+\]
+Această sumă poate fi descompusă în:
+\[
+\overline{a_{n-1} a_{n-2} \ldots a_1 a_0}_b = a_{n-1} \times b^{n-1} + a_{n-2} \times b^{n-2} + \ldots + a_1 \times b^1 + a_0 \times b^0
+\]
+\end{observation}
+
+
+Numerele mari sunt esențiale pentru calcule ce depășesc limita de $2^{63} - 1$. Acestea se bazează pe reprezentarea cifrică a numerelor. De exemplu, să reprezentăm numărul $82534$ folosind \cref{def:numere_in_baza_10}:
+\[
+82534 = 8 \times 10^{4} + 2 \times 10^3 + 5 \times 10^2 + 3 \times 10^1 + 4 \times 10^0 \Rightarrow
+\]
+\[
+82534 = 8 \times 10000 + 2 \times 1000 + 5 \times 100 + 3 \times 10 + 4 \times 1
+\]
+
+\section{Reprezentarea numerelor în memorie}
+
+Reprezentarea pe cifre a numerelor ne duce cu gândul la reprezentarea numărului folosind un vector, astfel o abordare comună pentru manipularea numerelor mari în algoritmica este reprezentarea acestora prin intermediul unui vector de cifre. Considerăm un număr mare, pe care îl descompunem în cifrele sale componente și le stocăm într-un vector.
+
+De exemplu, numărul $82534$ poate fi stocat într-un vector v astfel:
+\[
+\begin{array}{r|cccccccc}
+\text{Index } i & 0 & 1 & 2 & 3 & 4\\
+\hline
+v[i] & 4 & 3 & 5 & 2 & 8 \\
+\end{array}
+\]
+\begin{definition}\label{def:reprezenatarea_inversa}
+Fie un număr natural \( N \) cu cifrele \( \overline{a_{n-1} a_{n-2} \ldots a_1 a_0} \) în baza 10. Reprezentarea inversă a lui \( N \) într-un vector \( v \) de dimensiune \( n \) este definită astfel:
+\[ v[i] = a_{n-i} \quad \text{pentru} \quad i = 0, 1, \ldots, n-1 \]
+unde \( v[0] \) reprezintă cifra unităților, \( v[1] \) cifra zecilor, și așa mai departe, și \(n\) este numărul de cifre ale numărului natural \(N\)
+\end{definition}
+
+\begin{observation}
+    Numerotarea cifrelor de la coadă, ca în exemplul anterior, este opțională, dar este indicată pentru simplificare, deoarece este mult mai simplu să efectuăm operațiile dacă păstrăm numărul în memorie în ordine inversă față de cum l-am scrie în mod obișnuit. Practic, adăugarea unor valori la pozițiile mai nesemnificative este o operație mult mai des întâlnită decât adăugarea la începutul numărului, iar când e nevoie, putem crește lungimea numărului plasând noua cifră pe poziția $n$, $v[n]$ ținând această valoare.
+\end{observation}
+\subsection{Citirea și afișarea unui număr mare}
+Pentru citirea unui număr mare, vom citi lungimea numărului (numărul de cifre) și apoi cifrele sale, începând de la cea mai puțin semnificativă cifră (cifra unităților). Pentru afișare, procedăm invers, începând de la cea mai semnificativă cifră.
+
+\begin{minted}[fontsize=\small]{cpp}
+#include <iostream>
+using namespace std;
+
+const int NMAX = 1000; // Lungimea maxima a numarului
+
+int cifre[NMAX]; // Vectorul care va stoca cifrele numarului
+int n; // Lungimea numarului
+
+int main() {
+    cin >> n; // Citim lungimea numarului
+    for (int i = n - 1; i >= 0; i--) {
+        cin >> cifre[i]; // Citim cifrele de la coada spre cap
+    }
+
+    // Afisare
+    for (int i = n - 1; i >= 0; i--) {
+        cout << cifre[i];
+    }
+    return 0;
+}
+\end{minted}
+
+\subsection{Optimizarea prin stocarea lungimii \boldmath{v[0]}}
+
+O îmbunătățire semnificativă a acestei metode este reprezentată de utilizarea primei poziții a vectorului, $v[0]$, pentru a stoca lungimea numărului. Aceasta facilitează manipularea lungimii și permite modificări mai ușoare ale numărului, cum ar fi adăugarea sau eliminarea cifrelor.
+
+\begin{definition}\label{def:reprezenatarea_inversa_cu_nr}
+Fie un număr natural \( N \) cu cifrele \( \overline{a_{n-1} a_{n-2} \ldots a_1 a_0} \) în baza 10. Reprezentarea inversă a lui \( N \) într-un vector \( v \) de dimensiune \( n \) este definită astfel:
+\[ v[0] = n\]
+\[ v[i + 1] = a_{n-i} \quad \text{pentru} \quad i = 0, 1, \ldots, n-1 \]
+unde \( v[0] \) reprezintă cifra unităților, \( v[1] \) cifra zecilor, și așa mai departe, și \(n\) este numărul de cifre ale numărului natural \(N\)
+\end{definition}
+
+De exemplu, numărul $82534$ va fi stocat astfel:
+\[
+\begin{array}{r|ccccccccc}
+\text{Index } i & \boldsymbol{0} & 1 & 2 & 3 & 4 & 5\\
+\hline
+v[i] & \boldsymbol{5} & 4 & 3 & 5 & 2 & 8 \\
+\end{array}
+\]\\
+Aici, $v[0]=5$ indică numărul de cifre din $N$, iar cifrele sunt stocate în ordine inversă începând de la $v[1]$
+
+\todo{Utilizare vector<int> în schimb, dar trebuie rescris totul}
+
+\subsection*{Procesarea Eficientă a Numerelor Mari în C++}
+
+Un aspect comun este citirea numerelor mari atunci atunci când acestea sunt prezentate ca un șir continuu de cifre, fără separatoare precum spațiile. O tehnică eficientă pentru a aborda această problemă implică utilizarea stringurilor. Această metodă are avantajul de a permite citirea numerelor indiferent de lungimea lor, fără a necesita specificarea acesteia în prealabil.
+
+\subsubsection*{Pasul 1: Citirea Numărului ca String}
+
+Primul pas este citirea întregului număr ca un string. Aceasta este o abordare flexibilă care nu este constrânsă de lungimea numărului. De exemplu, pentru a citi un număr foarte mare:
+
+\begin{minted}[fontsize=\small]{cpp}
+string numarMare;
+cin >> numarMare;
+\end{minted}
+
+\subsubsection*{Pasul 2: Conversia Stringului în Vector de Cifre}
+
+După citirea numărului, următorul pas este conversia fiecărui caracter al stringului într-o cifră numerică individuală și stocarea acesteia într-un vector. Această conversie este realizată prin scăderea valorii ASCII a caracterului '$0$' din fiecare caracter al stringului. De asemenea, lungimea numărului este salvată în prima poziție a vectorului pentru a facilita accesul și manipularea ulterioară a cifrelor. 
+
+Iată cum arată implementarea:
+
+\begin{minted}[fontsize=\small]{cpp}
+#include <iostream>
+#include <string>
+
+using namespace std;
+
+const int NMAX = 1000; // Capacitatea maxima a vectorului
+int cifre[NMAX]; // Vectorul care va stoca cifrele numărului
+
+int main() {
+    string numarMare;
+    cin >> numarMare;
+
+    cifre[0] = numarMare.size(); // Stocam lungimea numarului în cifre[0]
+    for (int i = 0; i < cifre[0]; ++i) {
+        cifre[cifre[0] - i] = numarMare[i] - '0'; 
+    }
+
+    // Afisarea vectorului
+    for (int i = cifre[0]; i>= 1; i--) {
+        cout << cifre[i];
+    }
+    cout << endl;
+
+    return 0;
+}
+\end{minted}
+
+Această abordare simplifică semnificativ citirea numerelor mari
+
+\subsection{Utilizarea vector<int> din STL pentru stocare}
+Când am făcut citirea cu stringuri, am folosit numarMare.size() pentru a afla lungimea stringului. Putem folosi aceasi metoda pentru a afla si lungimea numarlui fara sa o stocam in $v[0]$ dar pentru a putea realiza asta, trebuie sa folosim vector<int>, atfel nu mai trebuie sa stocam dimensiunea in $v[0]$
+
+\subsubsection{Crearea vecotorului si insearea/stergerea cifrelor la inceput}
+\begin{minted}[fontsize=\small]{cpp}
+#include <iostream>
+#include <vector>
+
+using namespace std;
+
+int main(){
+    vector<int> cifre = {2, 1}; 
+    // putem initializa astfel vectorul cu un numar predefinit
+    // 12 in accest exemplu
+
+    // afisam numarul
+    cout << "Numarul de cifre: " << cifre.size() << "\n";
+    // pornim de la cifre.size() - 1 deoarece vectorul e indexat cu zero
+    for(int i = cifre.size() - 1; i >= 0; --i)
+        cout << cifre[i];
+    cout << "\n";
+
+    // insearea unei cifre noi in fata
+    cifre.push_back(9);
+
+    cout << "Numarul de cifre: " << cifre.size() << "\n";
+    for(int i = cifre.size() - 1; i >= 0; --i)
+        cout << cifre[i];
+    cout << "\n";
+
+    cifre.pop_back(); //stergem ultima cifra
+    cout << "Numarul de cifre: " << cifre.size() << "\n";
+    for(int i = cifre.size() - 1; i >= 0; --i)
+        cout << cifre[i];   
+}
+\end{minted}
+Observam că astfel dimensiunea vectorului poate varia, un lucru care ne poate ajuta extrem de mult atunci când nu știm cat de lung va fi numărul final. 
+

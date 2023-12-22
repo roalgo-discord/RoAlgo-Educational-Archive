@@ -96,36 +96,70 @@ Un concept foarte important în teoria grafurilor reprezintă modul în care par
 
 Să considerăm graful neorientat din figura \ref{fig:graph}. Acest graf are $13$ noduri și $12$ muchii, acestea fiind $(1, 4)$, $(1, 3)$, $(4, 9)$, $(9, 3)$, $(4, 2)$, $(4, 6)$, $(2, 6)$, $(2, 5)$, $(8, 12)$, $(8, 11)$, $(8, 10)$, $(8, 7)$.
 
-\begin{figure}[h!t!b]
-\includegraphics[width=\textwidth]{images/grafuri/graph.png}
+\begin{figure}
+\centering
+\begin{tikzpicture}[auto, thick, node distance=2.5cm, every node/.style={circle, draw, minimum size=0.8cm, ultra thick}]
+    \node (4) {4};
+    \node (8) [left of=4, node distance=3cm] {8};
+    \node (1) [above of=4] {1};
+    \node (9) [right of=1] {9};
+    \node (3) [right of=4] {3};
+    
+    \node (2) at ($(4) + (-120:2.5cm)$) {2};
+    \node (6) at ($(4) + (-60:2.5cm)$) {6};
+    
+    \node (5) at ($(2) + (-60:2.5cm)$) {5};
+    \node (13) at ($(2) + (-120:2.5cm)$) {13};
+
+    \node (7) at ($(8) + (-120:2.5cm)$) {7};
+    \node (10) at ($(8) + (-155:2.5cm)$) {10};
+    \node (11) at ($(8) + (155:2.5cm)$) {11};
+    \node (12) at ($(8) + (120:2.5cm)$) {12};
+
+    % Define edges
+    \path (1) edge (4);
+    \path (1) edge (3);
+    \path (4) edge (9);
+    \path (9) edge (3);
+    \path (4) edge (2);
+    \path (4) edge (6);
+    \path (2) edge (6);
+    \path (2) edge (5);
+    \path (8) edge (12);
+    \path (8) edge (11);
+    \path (8) edge (10);
+    \path (8) edge (7);
+\end{tikzpicture}
 \caption{\label{fig:graph} Un graf neorientat cu 13 noduri și 12 muchii.}
 \end{figure}
-
-
 
 Pentru a reprezenta un graf în memorie, există trei moduri principale de a o face, cu distincția că în practică se va folosi doar reprezentarea prin liste de vecini.
 
 \begin{definition}
-    Definim \textbf{matricea de adiacență a unui graf} ca fiind o matrice binară pentru care $a_{ij} = 1$ dacă și numai dacă avem muchie de la nodul $i$ la nodul $j$. De notat că pentru un graf neorientat, matricea este mereu simetrică $a_{ij} = a_{ji}$.
+    Definim \textbf{matricea de adiacență a unui graf} ca fiind o matrice binară pentru care $a_{ij} = 1$ dacă și numai dacă avem muchie de la nodul $i$ la nodul $j$ și $a_{ij} = 0$ în caz contrar. 
 \end{definition}
+\begin{observation}
+    Pentru un graf neorientat, matricea este mereu simetrică, adică $a_{ij} = a_{ji}\ \forall i, j$.
+\end{observation}
 
 Pentru graful nostru de la fig.~\ref{fig:graph}, aceasta este matricea de adiacență la care ajungem.
 
 \begin{equation*}
+    \small
     \begin{pmatrix}
-    0 & 0 & 1 & 1 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0\\
-    0 & 0 & 0 & 1 & 1 & 1 & 0 & 0 & 0 & 0 & 0 & 0 & 0\\
-    1 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 1 & 0 & 0 & 0 & 0\\
-    1 & 1 & 0 & 0 & 0 & 1 & 0 & 0 & 1 & 0 & 0 & 0 & 0\\
-    0 & 1 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0\\
-    0 & 1 & 0 & 1 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0\\
-    0 & 0 & 0 & 0 & 0 & 0 & 0 & 1 & 0 & 0 & 0 & 0 & 0\\
-    0 & 0 & 0 & 0 & 0 & 0 & 1 & 0 & 0 & 1 & 1 & 1 & 0\\
-    0 & 0 & 1 & 1 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0\\
-    0 & 0 & 0 & 0 & 0 & 0 & 0 & 1 & 0 & 0 & 0 & 0 & 0\\
-    0 & 0 & 0 & 0 & 0 & 0 & 0 & 1 & 0 & 0 & 0 & 0 & 0\\
-    0 & 0 & 0 & 0 & 0 & 0 & 0 & 1 & 0 & 0 & 0 & 0 & 0\\
-    0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0
+    {\color{gray}0} & {\color{gray}0} & \textbf{1} & \textbf{1} & {\color{gray}0} & {\color{gray}0} & {\color{gray}0} & {\color{gray}0} & {\color{gray}0} & {\color{gray}0} & {\color{gray}0} & {\color{gray}0} & {\color{gray}0}\\
+    {\color{gray}0} & {\color{gray}0} & {\color{gray}0} & \textbf{1} & \textbf{1} & \textbf{1} & {\color{gray}0} & {\color{gray}0} & {\color{gray}0} & {\color{gray}0} & {\color{gray}0} & {\color{gray}0} & {\color{gray}0}\\
+    \textbf{1} & {\color{gray}0} & {\color{gray}0} & {\color{gray}0} & {\color{gray}0} & {\color{gray}0} & {\color{gray}0} & {\color{gray}0} & \textbf{1} & {\color{gray}0} & {\color{gray}0} & {\color{gray}0} & {\color{gray}0}\\
+    \textbf{1} & \textbf{1} & {\color{gray}0} & {\color{gray}0} & {\color{gray}0} & \textbf{1} & {\color{gray}0} & {\color{gray}0} & \textbf{1} & {\color{gray}0} & {\color{gray}0} & {\color{gray}0} & {\color{gray}0}\\
+    {\color{gray}0} & \textbf{1} & {\color{gray}0} & {\color{gray}0} & {\color{gray}0} & {\color{gray}0} & {\color{gray}0} & {\color{gray}0} & {\color{gray}0} & {\color{gray}0} & {\color{gray}0} & {\color{gray}0} & {\color{gray}0}\\
+    {\color{gray}0} & \textbf{1} & {\color{gray}0} & \textbf{1} & {\color{gray}0} & {\color{gray}0} & {\color{gray}0} & {\color{gray}0} & {\color{gray}0} & {\color{gray}0} & {\color{gray}0} & {\color{gray}0} & {\color{gray}0}\\
+    {\color{gray}0} & {\color{gray}0} & {\color{gray}0} & {\color{gray}0} & {\color{gray}0} & {\color{gray}0} & {\color{gray}0} & \textbf{1} & {\color{gray}0} & {\color{gray}0} & {\color{gray}0} & {\color{gray}0} & {\color{gray}0}\\
+    {\color{gray}0} & {\color{gray}0} & {\color{gray}0} & {\color{gray}0} & {\color{gray}0} & {\color{gray}0} & \textbf{1} & {\color{gray}0} & {\color{gray}0} & \textbf{1} & \textbf{1} & \textbf{1} & {\color{gray}0}\\
+    {\color{gray}0} & {\color{gray}0} & \textbf{1} & \textbf{1} & {\color{gray}0} & {\color{gray}0} & {\color{gray}0} & {\color{gray}0} & {\color{gray}0} & {\color{gray}0} & {\color{gray}0} & {\color{gray}0} & {\color{gray}0}\\
+    {\color{gray}0} & {\color{gray}0} & {\color{gray}0} & {\color{gray}0} & {\color{gray}0} & {\color{gray}0} & {\color{gray}0} & \textbf{1} & {\color{gray}0} & {\color{gray}0} & {\color{gray}0} & {\color{gray}0} & {\color{gray}0}\\
+    {\color{gray}0} & {\color{gray}0} & {\color{gray}0} & {\color{gray}0} & {\color{gray}0} & {\color{gray}0} & {\color{gray}0} & \textbf{1} & {\color{gray}0} & {\color{gray}0} & {\color{gray}0} & {\color{gray}0} & {\color{gray}0}\\
+    {\color{gray}0} & {\color{gray}0} & {\color{gray}0} & {\color{gray}0} & {\color{gray}0} & {\color{gray}0} & {\color{gray}0} & \textbf{1} & {\color{gray}0} & {\color{gray}0} & {\color{gray}0} & {\color{gray}0} & {\color{gray}0}\\
+    {\color{gray}0} & {\color{gray}0} & {\color{gray}0} & {\color{gray}0} & {\color{gray}0} & {\color{gray}0} & {\color{gray}0} & {\color{gray}0} & {\color{gray}0} & {\color{gray}0} & {\color{gray}0} & {\color{gray}0} & {\color{gray}0}
     \end{pmatrix}
 \end{equation*}
 
@@ -133,40 +167,57 @@ Pentru graful nostru de la fig.~\ref{fig:graph}, aceasta este matricea de adiace
     Definim o \textbf{lista de vecini} ca fiind o listă (de regulă, alocată dinamic) pe care o folosim pentru a ține în memorie pentru fiecare nod doar nodurile adiacente cu acesta, această metodă fiind cea mai eficientă din punct de vedere practic pentru a parcurge grafurile.
 \end{definition}
 
-\begin{raggedright}
-1: 4 3\\
-2: 4 6 5\\
-3: 1 9\\
-4: 1 9 2 6\\
-5: 2\\
-6: 4 2\\
-7: 8\\
-8: 12 11 10 7\\
-9: 4 3\\
-10: 8\\
-11: 8\\
-12: 8\\
-13:
-\end{raggedright}
+\begin{table}[ht]
+  \centering
+  \begin{tabular}{cl}
+    \toprule
+    \textbf{Noduri} & \textbf{Vecini} \\
+    \midrule
+    1 & $\{3,4\}$ \\
+    2 & $\{4,5,6\}$ \\
+    3 & $\{1,9\}$ \\
+    4 & $\{1,2, , 9\}$ \\
+    5 & $\{2\}$ \\
+    6 & $\{2, 4\}$ \\
+    7 & $\{8\}$ \\
+    8 & $\{7,10,11,12\}$ \\
+    9 & $\{3,4\}$ \\
+    10 & $\{8\}$ \\
+    11 & $\{8\}$\\
+    12 & $\{8\}$ \\
+    13 & $\emptyset$ \\
+    \bottomrule
+  \end{tabular}
+  \caption{\label{tab:lista_vecini}Lista de vecini pentru graful neorientat din figura~\ref{fig:graph}}
+  
+\end{table}
 
 \begin{definition}
     Definim o \textbf{lista de muchii} ca fiind o listă pe care o folosim pentru a ține toate muchiile în memorie. Deși nu este o variantă prea practică de a efectua parcurgerile, această metodă poate fi utilă pentru anumiți algoritmi ce se bazează în principal pe prelucrarea muchiilor, un astfel de exemplu fiind arborele parțial de cost minim. 
 \end{definition}
 
-\begin{raggedright}
-1 4\\
-1 3\\
-4 9\\
-9 3\\
-4 2\\
-4 6\\
-2 6\\
-2 5\\
-8 12\\
-8 11\\
-8 10\\
-8 7\\
-\end{raggedright}
+\begin{observation}
+    În cazul nostru, lista de muchii este: 
+    \begin{gather*}
+    \{\{1, 4\}, \{1, 3\}, \{4,9\}, \{9,3\}, \{4,2\}, \{4,6\},\\
+    \{2,6\}, \{2,5\}, \{8,12\}, \{8,11\}, \{8,10\}, \{8,7\}\}
+\end{gather*}
+\end{observation}
+
+% \begin{FlushLeft}
+% 1 4\\
+% 1 3\\
+% 4 9\\
+% 9 3\\
+% 4 2\\
+% 4 6\\
+% 2 6\\
+% 2 5\\
+% 8 12\\
+% 8 11\\
+% 8 10\\
+% 8 7\\
+% \end{FlushLeft}
 
 \section{Conexitate. Parcurgerea DFS}
 
@@ -180,25 +231,29 @@ Problema aflării conexității unui graf este una din problemele fundamentale a
     Definim o \textbf{componentă conexă} ca fiind un subgraf \textbf{conex} al unui graf dat.
 \end{definition}
 
-Pentru a rezolva problema aflării conexității unui graf, va trebui să parcurgem graful folosind unul din algoritmii consacrați pentru această problemă. În cazul de față, vom continua prin a explica parcurgerea în adâncime a grafului (DFS - depth-first search), una din parcurgerile optime pentru această problemă. 
+Pentru a rezolva problema aflării conexității unui graf, va trebui să parcurgem graful folosind unul din algoritmii consacrați pentru această problemă. În cazul de față, vom continua prin a explica parcurgerea în adâncime a grafului (DFS sau depth-first search), una din parcurgerile optime pentru această problemă. 
 
 \begin{definition}
-    Definim parcurgerea \textbf{DFS - depth-first search} ca fiind o parcurgere recursivă a unui graf care pleacă de la un nod anume, iar la fiecare pas, dacă ne aflăm la un nod $x$, vom vizita vecinii nevizitați ai nodului $x$, apelând DFS pentru fiecare din ei. Complexitatea DFS este $O(n + m)$.
+    Definim \textbf{parcurgerea în adâncime} (DFS, engl. \enquote{depth-first search}) a unui graf ca fiind o parcurgere recursivă ce pleacă de la un nod anume, iar la fiecare pas, dacă ne aflăm la un nod $x$, vom vizita vecinii nevizitați ai nodului $x$, apelând DFS pentru fiecare din ei. 
 \end{definition}
 
 \begin{observation}
-    Se remarcă că un nod va fi vizitat la un moment dat doar o singură dată, deci dacă avem muchiile $(1, 2)$, $(1, 3)$ și $(2, 3)$, iar DFS-ul pleacă din $1$, $2$ va fi accesat din $1$, iar $3$ va fi accesat din $2$.
+    Complexitatea parcurgerii în adâncime (DFS) este $O(\lvert V \rvert + \lvert E \lvert)$, unde $\lvert V \rvert$ reprezintă numărul de noduri sau vârfuri și $\lvert E \rvert$ reprezintă numărul de muchii.\footnote{În probleme se notează convențional $\lvert V \rvert$ cu $N$ de la noduri, respectiv $\lvert E \rvert$ cu $M$ de la muchii. \textit{n.red.}}.
 \end{observation}
 
 \begin{observation}
-    Se poate remarca că ordinea în care vizităm nodurile în graf depinde de ordinea în care sunt adăugate muchiile în graf, acest lucru înseamnă că nu putem folosi DFS pentru anumite probleme, de exemplu cele la care trebuie aflată distanța minimă în graf.
+    Se remarcă faptul că un nod va fi vizitat la un moment dat doar o singură dată, deci dacă avem muchiile $(1, 2)$, $(1, 3)$ și $(2, 3)$, iar DFS-ul pleacă din $1$, $2$ va fi accesat din $1$, iar $3$ va fi accesat din $2$.
+\end{observation}
+
+\begin{observation}
+    Se poate remarca faptul că ordinea în care vizităm nodurile în graf depinde de ordinea în care sunt adăugate muchiile în graf, acest lucru înseamnă că nu putem folosi DFS pentru anumite probleme, de exemplu cele la care trebuie aflată distanța minimă în graf.
 \end{observation}
 
 \section{Problema \href{https://kilonova.ro/problems/2036}{Connected components} de pe kilonova}
 
 Se dă un graf neorientat $G$ cu $N$ noduri și $M$ muchii. Să se afle câte componente conexe are graful dat.
 
-Pentru a afla numărul de componente conexe ale unui graf, putem folosi parcurgerea DFS pentru a afla toate nodurile din care apelăm DFS din funcția main, acesta fiind și răspunsul la problema noastră. 
+Pentru a afla numărul de componente conexe ale unui graf, putem folosi parcurgerea DFS pentru a afla toate nodurile din care apelăm DFS din funcția \textit{main}, acesta fiind și răspunsul la problema noastră. 
 
 \cpp{codes/grafuri/connected-components.cpp}
 
@@ -213,11 +268,14 @@ Dacă în cazul parcurgerii DFS putem să o aplicăm fără mari probleme pentru
 Motivul pentru care nu putem afla drumul minim între două noduri folosind DFS este acela că ordinea în care nodurile sunt parcurse în DFS depinde de ordinea în care sunt date muchiile de la intrare, parcurgerea recursivă făcând aflarea distanțelor minime imposibilă. Astfel, vom introduce un alt mod de a parcurge graful nostru.
 
 \begin{definition}
-    Definim parcurgerea \textbf{BFS - breadth-first search} ca fiind o parcurgere iterativă a unui graf care pleacă de la unul sau mai multe noduri, iar la fiecare pas, dacă ne aflăm la un nod $x$, vom vizita vecinii nevizitați ai nodului $x$, adăugându-i într-o coadă, nodurile fiind parcurse în ordinea în care au fost adăugate în coadă. Complexitatea BFS este $O(n + m)$.
+    Definim \textbf{parcurgerea în lățime} (BFS, engl. \enquote{breadth-first search}) a unui graf ca fiind o parcurgere iterativă ce pleacă de la unul sau mai multe noduri, iar la fiecare pas, dacă ne aflăm la un nod $x$, vom vizita vecinii nevizitați ai nodului $x$, adăugându-i într-o coadă, nodurile fiind parcurse în ordinea în care au fost adăugate în coadă. 
 \end{definition}
+\begin{observation}
+    Complexitatea parcurgerii în lățime (DFS) este $O(\lvert V \rvert + \lvert E \lvert)$, unde $\lvert V \rvert$ reprezintă numărul de noduri sau vârfuri și $\lvert E \rvert$ reprezintă numărul de muchii.
+\end{observation}
 
 \begin{observation}
-    Se poate remarca că ordinea în care vizităm nodurile în graf va fi aceeași cu ordinea crescătoare a distanței minime față de nodul sau nodurile inițiale, datorită faptului că ele vor fi inserate în coadă în ordinea în care acestea au fost adăugate. 
+    Se poate remarca faptul că ordinea în care vizităm nodurile în graf va fi aceeași cu ordinea crescătoare a distanței minime față de nodul sau nodurile inițiale, datorită faptului că ele vor fi inserate în coadă în ordinea în care acestea au fost adăugate. 
 \end{observation}
 
 \section{Problema \href{https://kilonova.ro/problems/2037}{Simple Shortest Path} de pe kilonova}
@@ -240,7 +298,7 @@ Această problemă se împarte în două subprobleme relativ ușor de identifica
 
 Se dă un graf neorientat conex cu $N$ noduri și două noduri $X$ și $Y$, să se afle nodurile ce aparțin tuturor lanțurilor optime între $X$ și $Y$.
 
-Pentru a rezolva această problemă, va trebui mai întâi să aflăm folosind o parcurgere de tip BFS distanțele minime de la $X$ și $Y$ spre toate celelalte noduri. Apoi, pentru fiecare distanță $d$ de la $0$ la $dist(X, Y)$, vrem să aflăm câte noduri se află pe unul din drumurile optime de la $X$ la $Y$ la o distanță $d$ față de $X$. În cele din urmă, vrem să afișăm nodurile situate la distanțele care apar o singură dată în mulțimea nodurilor ce fac parte din cel puțin un drum optim de la $X$ la $Y$.
+Pentru a rezolva această problemă, va trebui mai întâi să aflăm folosind o parcurgere de tip BFS distanțele minime de la $X$ și $Y$ spre toate celelalte noduri. Apoi, pentru fiecare distanță $d$ de la $0$ la $\operatorname{dist}(X, Y)$, vrem să aflăm câte noduri se află pe unul din drumurile optime de la $X$ la $Y$ la o distanță $d$ față de $X$. În cele din urmă, vrem să afișăm nodurile situate la distanțele care apar o singură dată în mulțimea nodurilor ce fac parte din cel puțin un drum optim de la $X$ la $Y$.
 
 Codul sursă se poate viziona mai jos. 
 

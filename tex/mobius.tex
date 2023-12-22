@@ -1,0 +1,178 @@
+\ChapterWithAuthor{Funcția Möbius}{Ionescu Matei}
+
+\section{Noțiuni introductive}
+% În teoria numerelor, o funcție aritmetică este o funcție $f(n)$ definită pe mulțimea numerelor pozitive, cu valori în mulțimea numerelor complexe. O funcție aritmetica exprimă proprietăți aritmetice pentru $n$.
+
+ În teoria numerelor, o funcție aritmetică este o funcție $f(n) : \mathbb{N} \to \mathbb{C}$. O funcție aritmetica exprimă proprietăți aritmetice pentru $n$.
+
+Pentru $m, n$ numere coprime (adică $\cmmdc(m, n) = 1$), avem două feluri de funcții aritmetice:
+\begin{enumerate}
+    \item funcții \textit{aditive}, unde $f(mn) = f(n) + f(m)$;
+    \item funcții \textit{multiplicative}, unde $f(mn)$ = $f(m)f(n)$.
+\end{enumerate}
+Pentru simplitate vom defini următoarele aspecte: 
+\begin{enumerate}
+    \item $[p] = 1$ dacă $p$ este o propoziție adevărată sau 0 în caz contrar.
+    \item $\lfloor n \rfloor$ = partea întreagă a lui $n$.
+    \item $\sum_{k = 1}^{N} \frac{1}{k} \approx \log{N}$.
+    \item Șirul $ a_i = \lfloor \frac{N}{i} \rfloor $, cu $i \leq N$, are $\O{\sqrt N}$ valori distincte.
+\end{enumerate}
+Pentru $\forall p \in \mathbb{N}$, $p$ număr prim, și $\forall k \in \mathbb{N}$, definim următoarele funcții multiplicative:
+\begin{enumerate}
+    \item funcția identică $I(p^k) = p^k$;
+    \item funcția putere $P_a(p^k) = p^{ka}$, unde $a$ este constantă (nu confundăm cu funcția exponențiala $f_a(p^k) = a^{p^k}$);
+    \item funcția unitate $U(p^k) = [p^k = 1]$;
+    \item funcția divizorilor $\sigma (p^k)$ = numărul de divizori ai lui $p^k$; 
+    \item indicatorul lui Euler $\varphi(p^k) $ = $p^{k} - p^{k-1}$, câte numere $x$, cu $1 \leq x \leq p^k$ și $\cmmdc(x, p^k) = 1$ există 
+    \item funcția Möbius $\mu(p^k) = [k = 0] - [k = 1]$.
+\end{enumerate}
+
+\begin{definition}
+    Două funcții multiplicative , $f(n)$ și $g(n) $,  sunt identice dacă pentru oricare $p$ număr prim și oricare $k \geq 0$, $g(p^k) = f(p^k)$.
+\end{definition}
+\section{Precalcularea funcțiilor multiplicative}
+În contextul nostru, vom lucra cel mai des cu funcții multiplicative, iar de cele mai multe ori avem nevoie să știm valorile unei funcții pentru un set mai larg de elemente. Și se dovedește că Ciurul învățat în clasa a 6-a este bun nu numai la aflarea numerelor prime.
+
+\subsection{Ciurul lui Eratostene}
+%explic aici care e ciuru, dc merge in \O{N \cdot \log{N}}
+Acest algoritm este poate cel mai popular printre elevii de liceu și gimnaziu pentru a afla numerele prime într-un interval. 
+\cpp{codes/mobius/ciur_eratostene.cpp}
+
+La finalul programului, $k$ va fi număr prim doar dacă $\operatorname{ciur}(k) = 0$.
+
+Complexitatea de timp este $\O{\sum_{k=1}^N \frac{N}{k}} = \O{N \log{N}}$. 
+\subsection{Ciur liniar} 
+%cum il faci liniar gen
+Observăm că fiecare număr compus $X$ este parcurs de către cel de-al doilea for de mai multe ori. Dacă am putea să iterăm prin fiecare număr compus exact o singură dată am ajunge la complexitatea de \O{N}. Reținem într-un vector auxiliar numerele prime, și pentru un $i$ fixat vom parcurge numerele prime până când un număr prim nu divide $i$.
+\cpp{codes/mobius/ciur_liniar.cpp}
+\begin{proof}
+    Ca să demonstrăm faptul că ciurul de mai sus iterează prin fiecare număr compus exact odată avem nevoie de cel mai mic factor prim al acestuia, $p$. Să presupunem că $q = i \cdot p$. Pentru oricare $j > i$, $j$ este divizor a lui  $q$, presupunem ca $k = \frac{q}{j}$ este prim. Cum $i < j$, atunci $k < p$, însă $p$ este cel mai mic număr prim care divide $q$, deci nu există un astfel $k$. Deci odată luată în considerare perechea $(i, p)$,\, $i \cdot p$ va fi calculat doar o singură dată, transformând complexitatea finală în \O{N}.
+\end{proof}
+
+\subsection{Precalcularea indicatorului lui Euler folosind Ciurul Liniar}
+Pentru a calcula $\varphi(n)$ trebuie să luam în considerare $3$ cazuri:
+\begin{enumerate}
+    \item $n$ este prim \Rightarrow~$\varphi(n) = n-1$
+    \item $n = i \cdot p$ și $p \nmid i$ \Rightarrow~$\varphi(n) = \varphi(i) \varphi(p)$. \textit{Prin $a \nmid b$ înțelegem : "a nu divide pe b"}.
+    \item $n = i \cdot p$ și $p \mid i$. Acest caz este uneori greu de tratat, dar din fericire știm sigur că $\varphi(ip) = p\varphi(i)\ \forall i, p$.
+\end{enumerate}
+\cpp{codes/mobius/phi_ciur_liniar.cpp}
+\subsection{Generalizare a ciurului liniar}
+Totuși, putem să generalizăm algoritmul prezentat mai sus pentru a funcționa pentru oricare funcție multiplicativă.
+Fie $sml(n) = $ puterea celui mai mic factor din descompunerea în factori primi a lui $n$. Pentru oricare $i$ și $p$, $p$ număr prim care divide $i$, putem scrie $f(ip) = f(\frac{i}{p^{sml(i)}}) \cdot f(p^{sml(i) + 1})$.
+\cpp{codes/mobius/phi_ciur_generalizat.cpp}
+Gândim similar pentru funcția Möbius: 
+\begin{enumerate}
+    \item $n$ prim \Rightarrow~$\mu(n) = -1$
+    \item $n = i \cdot p$, $p \nmid i$ \Rightarrow~$\mu(n) = \mu(i) \cdot \mu(p)$
+    \item $n = i \cdot p$, $p \mid i$ \Rightarrow~$\mu(n) = \frac{\mu(i)}{[sml(i)=0]-[sml(i)=1]} \cdot ([sml(i)+1=0]-[sml(i)+1=1])$.
+\end{enumerate}
+\begin{observation}
+    În cazul în care fracția de mai sus nu este definită (numitorul este $0$), putem spune din start că $\mu(n) = 0$.
+\end{observation}
+\cpp{codes/mobius/mobius_ciur_generalizat.cpp}
+
+\subsection{Implementare mai populară}
+Rare ori avem nevoie de ciur liniar, și dacă nu intră în timp $\O{N \log{N}}$ pentru precalculare, de ce ar intra $\O{N}$? \textit{(vom vedea exemple mai jos)}
+\cpp{codes/mobius/phi_mobius.cpp}
+
+\section{Inversiunea lui Möbius}
+Ultimele din cele $3$ funcții prezentate la începutul articolului sunt mai cunoscute ca restul, însă noi ne vom folosi cel mai mult de ultimele $2$, anume indicatorul lui Euler și funcția Möbius.
+
+Fie $g(n)$ = $\sum_{d\mid n} f(d)$. Inversiunea lui Möbius ne spune:
+\begin{equation*}
+    f(n) = \sum_{d\mid n} g(d) \cdot \mu \left(\frac{n}{d}\right)
+\end{equation*}
+Cu toate astea, o proprietate mai importantă este $\sum_{d\mid n} \mu(d) = U(n)$. Ceea ce sugerează expresia este că pentru oricare număr natural $n$ suma va da $1$ doar dacă $n = 1$. Pare nesemnificativă proprietatea, însă este foarte utilă în rezolvarea multor probleme de informatică.
+
+Exercițiu $1$: Calculează câte perechi $(a,b)$ ($1 \leq a,b \leq n$) există cu proprietatea că $\cmmdc(a,b) = 1$.
+
+Rezolvare: Noi trebuie să calculăm $\sum_{i=1}^{n} \sum_{j=1}^{n} [\cmmdc(i, j) = 1]$. Ne putem folosi de proprietatea de mai sus și să scriem relația astfel: 
+\begin{equation*}
+    \sum_{i=1}^{n} \sum_{j=1}^{n} \sum_{d \mid  \cmmdc(i,j)} \mu(d)
+\end{equation*}
+Iterăm prin toate numerele $\leq n$ în loc de divizorii lui $n$ și obținem 
+\begin{equation*}
+    \sum_{i=1}^{n} \sum_{j=1}^{n} \sum_{d = 1}^{n} \mu(d) \cdot [d\mid \cmmdc(i,j)] = \sum_{i=1}^{n} \sum_{j=1}^{n} \sum_{d = 1}^{n} \mu(d) \cdot [d\mid i] \cdot [d\mid j]
+\end{equation*}
+Rearanjăm termenii și obținem
+\begin{equation*}
+    \sum_{d=1}^{n} \mu(d) \left(\sum_{i=1}^{n} [d\mid i]\right) \left(\sum_{j=1}^{n} [d\mid j]\right)
+\end{equation*}
+Observăm că \begin{equation*}
+    \sum_{i=1}^{n} [d\mid i] = \sum_{j=1}^{n} [d\mid j] = \left\lfloor \frac{n}{d} \right\rfloor
+\end{equation*} deci relația finală devine $\sum_{d=1}^{n} \mu(d) \cdot (\frac{n}{d})^2$, care poate fi calculată în \O{n}.
+
+Exercițiu 2: Calculează câte perechi $(a,b)$ exisă, astfel încât $1 \leq a,b \leq n$ și $\cmmdc(a, b)$ = $P$.
+
+Rezolvare: \begin{equation*}
+    \sum_{i=1}^{n} \sum_{j=1}^{n} [\cmmdc(i,j) = P] = \sum_{i=1}^{\frac{n}{P}} \sum_{j=1}^{\frac{n}{P}} [\cmmdc(i,j) = 1]
+\end{equation*}
+Observăm că e identic cu exercițiul precedent, rezultatul fiind $\sum_{d=1}^{\frac{n}{P}} \mu(d) \cdot \left(\frac{n}{dP}\right)^2$.
+
+\section{Probleme propuse spre rezolvare}
+\subsection{Problema \href{https://kilonova.ro/problems/2004}{sumgcd} de pe Kilonova}
+
+Pentru $N$ și $M$ date la tastatură, trebuie să calculați $\sum_{V} \cmmdc(V)$, unde $V$ reprezintă un $M$-tuplu. Un $M$-tuplu reprezintă o mulțime de $M$ elemente nu neapărat distincte cu valori cuprinse între 1 și $N$. Formal, noi trebuie să calculam $\sum_{i_1 = 1}^{N} \sum_{i_2 = 1}^{N} \dots \sum_{i_M = 1}^{N} \cmmdc(i_1, i_2, \dots, i_M)$.
+
+Dacă pentru un $K$ fixat aflăm câte M-tupluri există cu \cmmdc-ul este egal cu $K$, atunci putem rezolva foarte ușor problema. Fie $f(K)$ numărul de tupluri $(m, n)$ pentru care $\cmmdc(m, n) = K$:
+\begin{align*}
+    f(K) &= \sum_{i_1 = 1}^{N} \sum_{i_2 = 1}^{N} \dots \sum_{i_M = 1}^{N} [\cmmdc(i_1, i_2, \dots, i_M) = K]\\
+    &= \sum_{i_1 = 1}^{\frac{N}{K}} \sum_{i_2 = 1}^{\frac{N}{K}} \dots \sum_{i_M = 1}^{\frac{N}{K}} [\cmmdc(i_1, i_2, \dots, i_M) = 1]\\
+    &= \sum_{i_1 = 1}^{\frac{N}{K}} \sum_{i_2 = 1}^{\frac{N}{K}} \dots \sum_{i_M = 1}^{\frac{N}{K}} \sum_{d = 1}^{\frac{N}{K}} \mu(d) \cdot [d\mid i_1] \cdot \dots \cdot [d\mid i_M]\\
+    &= \sum_{d = 1}^{\frac{N}{K}} \mu(d) \cdot \left(\sum_{i_1 = 1}^{\frac{N}{K}} [d\mid i_1]\right) \cdots \left(\sum_{i_M = 1}^{\frac{N}{K}} [d\mid i_M]\right)\\
+    &= \sum_{d = 1}^{\frac{N}{K}} \mu(d) \cdot \left(\frac{N}{Kd}\right)^M
+\end{align*}
+
+Rezultatul problemei este dat de $\sum_{i=1}^{N} f(i) \cdot i$. Complexitatea de timp pentru a calcula $f(K)$ este \O{\frac{N}{K}\log{M}}, astfel complexitatea finală  este 
+\begin{align*}
+    \sum_{i=1}^{N} \O{\frac{N}{i} \log{M}} 
+    &= \O{\left(N + \frac{N}{2} + \frac{N}{3} + \cdots + \frac{N}{N}\right) \log{M}}\\
+    &= \O{N \left(1 + \frac{1}{2} + \frac{1}{3} + \cdots + \frac{1}{N}\right) \log{M}}\\
+    &= \O{N\log{N}\log{M}}.
+\end{align*}
+
+Altă soluție este următoarea: 
+\begin{align*}
+    f(K) &= M^{\left\lfloor \frac{N}{K} \right\rfloor} - \sum_{K\mid i} f(i)\\
+    &= M^{\left\lfloor \frac{N}{K} \right\rfloor} - \sum_{i=1}^{N} f(i) \cdot [K\mid i] \\
+    &= M^{\left\lfloor \frac{N}{K} \right\rfloor} - \sum_{i=1}^{\frac{N}{K}} f(K \cdot i)
+\end{align*}
+
+Complexitatea devine:
+\begin{align*}
+    \sum_{i=1}^{N} \O{\left\lfloor \frac{N}{i} \right\rfloor + \log{M}} &= \O{N \left(1 + \frac{1}{2} + \frac{1}{3} + \dots \frac{1}{N}\right) + N \log{M}}\\
+    &= \O{N \log{N} + N \log{M}}\\
+    &= \O{N\left(\log{N} + \log{M}\right)}\\
+    &= \O{N\log{(MN)}}
+\end{align*}
+
+Ambele iau $100$ puncte.
+
+\subsection{Problema \href{https://kilonova.ro/problems/372}{cntgcd}}
+Se dau două numere naturale $N$ și $D$. Calculați câte perechi de numere $A$ și $B$ mai mici ca $N$ există, astfel încât $\cmmdc(A,B) = D$. Perechea $(A,B)$ = $(B, A)$.
+
+Putem să luăm rezultatul de la primul exercițiu, pentru că probleme sunt aceleași. Singura restricție este faptul că perechea $(A,B)$ = $(B,A)$, dar putem efectiv să împărțim rezultatul la 2.
+\begin{equation*}
+ans = \frac{\sum_{d=1}^{\frac{N}{D}} \mu(d) \cdot \left(\frac{N}{dD}\right)^2 + 1}{2}
+\end{equation*}
+Soluția ia undeva la $45$ puncte, datorită faptului că $D \leq N \leq 10^9$.
+
+Fie $f(n)$ = numărul de perechi $(A,B)$, unde $\cmmdc(A,B) = 1$. Noi trebuie să calculăm practic $f(\lfloor \frac{N}{D} \rfloor ) = \sum_{d = 1}^{\lfloor \frac{N}{D} \rfloor } \varphi(d)$.
+
+Pentru $N \leq 10^6$ putem calcula suma brut. Pentru $N > 10^6$ putem elimina perechile care au cmmdc-ul 2, 3 etc.
+\begin{equation*}
+    f(n) = \frac{n^2 - n}{2} - \sum_{d=2}^{n} f(\lfloor \frac{n}{d} \rfloor)
+\end{equation*}
+
+Datorită faptului că șirul $a_i = \lfloor \frac{N}{i} \rfloor$ are $\O{\sqrt{N}}$ elemente diferite, putem doar să calculăm câte valori $x$ îndeplinesc egalitatea $\frac{N}{d}$ și să adunăm la rezultat $nr \cdot f(\lfloor \frac{N}{d} \rfloor$.
+\cpp{codes/mobius/cod_cntgcd.cpp}
+
+\subsection{Problema \href{https://kilonova.ro/problems/1820}{tupleco}}
+% un tuplu, doua tupluri
+Se dau două numere $K$ și $N$. Să se afle $T$, numărul de tupluri formate din $K$ elemente $(X_1, X_2, X_3, \dots , X_K)$ cu proprietatea că:
+\begin{enumerate}
+    \item $1 \leq X_1 \leq X_2 \leq \dots \leq X_K$.
+    \item $\cmmdc(X_1, X_2, \dots, X_K) = 1$.
+\end{enumerate}
+

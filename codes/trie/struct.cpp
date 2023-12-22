@@ -1,10 +1,12 @@
-
-struct trie{
+struct Trie {
     int cnt;
-    trie* fii[26];
-    trie(){
-        cnt = 0;
-        memset(fii, NULL, sizeof(fii));
+    Trie *fii[26];
+
+    Trie() : cnt{0}, fii{nullptr} {}
+
+    ~Trie() {
+        for (auto &fiu: fii) delete fiu;
     }
 };
-trie* root = new trie;
+
+Trie *root = new Trie;
